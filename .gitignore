@@ -1,0 +1,87 @@
+# ---------------------------------------------------
+# Unreal Engine .gitignore
+# Generated for FirstMultiplayer project
+# ---------------------------------------------------
+
+# Visual Studio 2015/2017/2019/2022 cache/options directory
+.vs/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# Build generated files
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Cache files
+*.VC.db
+*.VC.VC.opendb
+
+# Compiled source
+*.o
+*.obj
+*.exe
+*.dll
+*.pdb
+*.lib
+
+# Visual Studio generated project files
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Rider generated project files
+*.sln.DotSettings.user
+
+# Xcode generated project files
+*.xcodeproj
+*.xcworkspace
+
+# Precompiled Assets
+SourceArt/**/*.png
+SourceArt/**/*.tga
+
+# Precompiled Headers
+PCH/
+
+# Projects content directory binary assets (uncomment if using text-based formats/LFS)
+# *.uasset
+# *.umap
+
+# Packaged/exported builds
+Packaged/
+
+# IWYU
+*.iwyu
+
+# Rider auto-generated files
+*.DotSettings.user
+
+# Compressed/plugin specific folders that are safe to exclude
+Plugins/**/Binaries/
+Plugins/**/Intermediate/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Crash reports
+CrashReportClient/
