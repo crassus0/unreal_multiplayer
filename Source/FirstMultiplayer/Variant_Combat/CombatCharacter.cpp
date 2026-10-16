@@ -14,6 +14,8 @@
 #include "Engine/DamageEvents.h"
 #include "TimerManager.h"
 #include "Engine/LocalPlayer.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 #include "CombatPlayerController.h"
 
 ACombatCharacter::ACombatCharacter()
@@ -49,6 +51,13 @@ ACombatCharacter::ACombatCharacter()
 
 	// set the player tag
 	Tags.Add(FName("Player"));
+}
+
+void ACombatCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//Replicate current health.
+	DOREPLIFETIME(ACombatCharacter, CurrentHP);
 }
 
 void ACombatCharacter::Move(const FInputActionValue& Value)
@@ -476,12 +485,12 @@ float ACombatCharacter::TakeDamage(float Damage, struct FDamageEvent const& Dama
 	}
 	else
 	{
-		// update the life bar
-		LifeBarWidget->SetLifePercentage(CurrentHP / MaxHP);
+		
 
 		// enable partial ragdoll physics, but keep the pelvis vertical
 		GetMesh()->SetPhysicsBlendWeight(0.5f);
 		GetMesh()->SetBodySimulatePhysics(PelvisBoneName, false);
+		OnHealthUpdate();
 	}
 
 	// return the received damage amount
@@ -497,6 +506,44 @@ void ACombatCharacter::Landed(const FHitResult& Hit)
 	{
 		// disable ragdoll physics
 		GetMesh()->SetPhysicsBlendWeight(0.0f);
+	}
+}
+
+void ACombatCharacter::OnRep_CurrentHealth()
+{
+	OnHealthUpdate();
+}
+
+void ACombatCharacter::OnHealthUpdate()
+{
+	//Client-specific functionality
+	if (IsLocallyControlled())
+	{
+		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining out of %f"), CurrentHP, MaxHP);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+ 
+		if (CurrentHP <= 0)
+		{
+			FString deathMessage = FString::Printf(TEXT("You have been killed."));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
+		}
+	}
+ 
+	//Server-specific functionality
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining out of %f."), *GetFName().ToString(), CurrentHP, MaxHP);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+	}
+ 
+	//Functions that occur on all machines.
+	/*
+		Any special functionality that should occur as a result of damage or death should be placed here.
+	*/
+	if (LifeBarWidget != nullptr)
+	{
+		// update the life bar
+		LifeBarWidget->SetLifePercentage(CurrentHP / MaxHP);
 	}
 }
 

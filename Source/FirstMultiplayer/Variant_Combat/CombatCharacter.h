@@ -78,7 +78,7 @@ protected:
 	float MaxHP = 5.0f;
 
 	/** Current amount of HP the character has */
-	UPROPERTY(VisibleAnywhere, Category="Damage")
+	UPROPERTY(VisibleAnywhere, Category="Damage", ReplicatedUsing = OnRep_CurrentHealth)
 	float CurrentHP = 0.0f;
 
 	/** Life bar widget fill color */
@@ -192,6 +192,7 @@ public:
 	
 	/** Constructor */
 	ACombatCharacter();
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 
@@ -306,12 +307,16 @@ public:
 	/** Overrides landing to reset damage ragdoll physics */
 	virtual void Landed(const FHitResult& Hit) override;
 
+
 protected:
 
 	/** Blueprint handler to play damage dealt effects */
 	UFUNCTION(BlueprintImplementableEvent, Category="Combat")
 	void DealtDamage(float Damage, const FVector& ImpactPoint);
 
+	UFUNCTION()
+	void OnRep_CurrentHealth();
+	void OnHealthUpdate();
 	/** Blueprint handler to play damage received effects */
 	UFUNCTION(BlueprintImplementableEvent, Category="Combat")
 	void ReceivedDamage(float Damage, const FVector& ImpactPoint, const FVector& DamageDirection);
