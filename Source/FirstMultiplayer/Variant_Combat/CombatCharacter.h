@@ -239,10 +239,18 @@ public:
 	/** Handles charged attack pressed from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoChargedAttackStart();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_DoChargedAttackStart();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_DoChargedAttackStart();
 
 	/** Handles charged attack released from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoChargedAttackEnd();
+	UFUNCTION(Server, Reliable)
+	virtual void Server_DoChargedAttackEnd();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_DoChargedAttackEnd();
 
 protected:
 

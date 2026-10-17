@@ -153,6 +153,11 @@ void ACombatCharacter::DoComboAttackEnd()
 
 void ACombatCharacter::DoChargedAttackStart()
 {
+	if (IsLocallyControlled())
+	{
+		Server_DoChargedAttackStart();
+	}
+
 	// raise the charging attack flag
 	bIsChargingAttack = true;
 
@@ -173,8 +178,25 @@ void ACombatCharacter::DoChargedAttackStart()
 	ChargedAttack();
 }
 
+void ACombatCharacter::Server_DoChargedAttackStart_Implementation()
+{
+	Multicast_DoChargedAttackStart();
+}
+
+void ACombatCharacter::Multicast_DoChargedAttackStart_Implementation()
+{
+	if (!IsLocallyControlled())
+	{
+		DoChargedAttackStart();
+	}
+}
+
 void ACombatCharacter::DoChargedAttackEnd()
 {
+	if (IsLocallyControlled())
+	{
+		Server_DoChargedAttackEnd();
+	}
 	// lower the charging attack flag
 	bIsChargingAttack = false;
 
@@ -185,6 +207,19 @@ void ACombatCharacter::DoChargedAttackEnd()
 		bHasReleasedChargedAttack = true;
 
 		LoopOrResolveChargedAttack();
+	}
+}
+
+void ACombatCharacter::Server_DoChargedAttackEnd_Implementation()
+{
+	Multicast_DoChargedAttackEnd();
+}
+
+void ACombatCharacter::Multicast_DoChargedAttackEnd_Implementation()
+{
+	if (!IsLocallyControlled())
+	{
+		DoChargedAttackEnd();
 	}
 }
 
